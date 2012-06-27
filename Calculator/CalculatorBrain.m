@@ -44,7 +44,7 @@
 {
     double result = 0;
     
-    if ([operation isEqualToString:@"+"])
+    if ([@"+" isEqualToString:operation])
     {
         result = [self popOperand] + [self popOperand];
     }
@@ -65,10 +65,30 @@
             result = [self popOperand] / divisor;
         }
     }
+    else if ([@"sin" isEqualToString:operation])
+    {
+        result = sin([self popOperand]);
+    }
+    else if ([@"cos" isEqualToString:operation])
+    {
+        result = cos([self popOperand]);
+    }
+    else if ([@"sqrt" isEqualToString:operation])
+    {
+        result = sqrt([self popOperand]);
+    }
+    else if ([@"π" isEqualToString:operation])
+    {
+        result = M_PI;
+    }
     
     [self pushOperand:result];
     
     return result;
 }
 
+- (void)clear
+{
+    [self.operandStack removeAllObjects];
+}
 @end

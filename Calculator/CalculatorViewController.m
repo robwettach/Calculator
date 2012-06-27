@@ -16,6 +16,7 @@
 
 @implementation CalculatorViewController
 @synthesize display;
+@synthesize summary;
 @synthesize userIsInTheMiddleOfEnteringANumber;
 @synthesize brain = m_brain;
 
@@ -33,10 +34,21 @@
     NSString *digit = [sender currentTitle];
     if (self.userIsInTheMiddleOfEnteringANumber)
     {
+        if ([@"." isEqualToString:digit])
+        {
+            if ([self.display.text rangeOfString:@"."].location != NSNotFound)
+            {
+                digit = @"";
+            }
+        }
         self.display.text = [self.display.text stringByAppendingString:digit];
     }
     else 
     {
+        if ([@"." isEqualToString:digit])
+        {
+            digit = @"0.";
+        }
         self.display.text = digit;
         self.userIsInTheMiddleOfEnteringANumber = YES;
     }
@@ -44,6 +56,7 @@
 
 - (IBAction)enterPressed 
 {
+    self.summary.text = [self.summary.text stringByAppendingFormat:@" %@", self.display.text];
     [self.brain pushOperand:[self.display.text doubleValue]];
     self.userIsInTheMiddleOfEnteringANumber = NO;
 }
@@ -55,9 +68,13 @@
         [self enterPressed];
     }
     NSString *operation = [sender currentTitle];
-    NSLog(@"Pressed %@", operation);
+    self.summary.text = [self.summary.text stringByAppendingFormat:@" %@", operation];
     double result = [self.brain performOperation:operation];
     self.display.text = [NSString stringWithFormat:@"%g", result];
-    NSLog(@"New display: %@", self.display.text);
+}
+- (IBAction)clearPressed {
+    [self.brain clear];
+    self.summary.text = @"";
+    self.display.text = @"0";
 }
 @end
